@@ -16,3 +16,4 @@ update-doc:
 
 .PHONY: tests-all
 tests-all: test-coding-standard test-unit test-static update-doc
+	cat build/logs/coverage.txt

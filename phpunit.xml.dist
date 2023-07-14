@@ -15,10 +15,17 @@
             <directory>tests</directory>
         </testsuite>
     </testsuites>
-    <coverage/>
     <source>
         <include>
             <directory suffix=".php">src</directory>
         </include>
     </source>
+    <coverage>
+        <report>
+            <clover outputFile="build/logs/clover.xml"/>
+            <php outputFile="build/logs/coverage.php"/>
+            <text outputFile="build/logs/coverage.txt" showUncoveredFiles="false" showOnlySummary="true"/>
+            <xml outputDirectory="build/logs/xml-coverage"/>
+        </report>
+    </coverage>
 </phpunit>

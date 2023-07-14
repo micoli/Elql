@@ -55,7 +55,7 @@ jobs:
               run: vendor/bin/psalm
 
             - name: "Run tests"
-              run: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+              run: vendor/bin/phpunit
 
             - name: Upload coverage report to Coveralls
               run: vendor/bin/coveralls.php --service=github --coverage_clover=build/logs/clover.xml -v
