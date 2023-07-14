@@ -33,18 +33,18 @@ class Elql
      *
      * @return T[]
      */
-    public function find(string $model, string $where = null): array
+    public function find(string $model, string $where = null, array $parameters = []): array
     {
         return array_values(array_filter(
             $this->persister->getRecords($model)->data,
-            fn (mixed $record) => $this->match($record, $where),
+            fn (mixed $record) => $this->match($record, $where, $parameters),
         ));
     }
 
     /**
      * @param class-string $model
      */
-    public function delete(string $model, string $where = null): void
+    public function delete(string $model, string $where = null, array $parameters = []): void
     {
         $this->persister->updateRecords($model, array_values(array_filter(
             $this->persister->getRecords($model)->data,
@@ -55,9 +55,9 @@ class Elql
     /**
      * @param class-string $model
      */
-    public function count(string $model, string $where = null): int
+    public function count(string $model, string $where = null, array $parameters = []): int
     {
-        return count($this->find($model, $where));
+        return count($this->find($model, $where, $parameters));
     }
 
     /**
@@ -66,11 +66,11 @@ class Elql
      * @param class-string<T> $model
      * @param callable(T):T $updater
      */
-    public function update(string $model, callable $updater, string $where = null): void
+    public function update(string $model, callable $updater, string $where = null, array $parameters = []): void
     {
         $this->persister->updateRecords($model, array_map(
             /** @param T $record */
-            fn (mixed $record): mixed => $this->match($record, $where)
+            fn (mixed $record): mixed => $this->match($record, $where, $parameters)
                 ? $updater($record)
                 : $record,
             $this->persister->getRecords($model)->data,
@@ -82,12 +82,12 @@ class Elql
      *
      * @psalm-param T|object $record
      */
-    private function match(mixed $record, ?string $where): bool
+    private function match(mixed $record, ?string $where, array $parameters = []): bool
     {
         if ($where === null) {
             return true;
         }
 
-        return (bool) $this->expressionLanguageEvaluator->evaluate($where, $record);
+        return (bool) $this->expressionLanguageEvaluator->evaluate($where, $record, $parameters);
     }
 }

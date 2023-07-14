@@ -14,18 +14,18 @@ class ExpressionLanguageEvaluator implements ExpressionLanguageEvaluatorInterfac
         private readonly ExpressionLanguage $expressionLanguage = new ExpressionLanguage(new ArrayAdapter()),
     ) {
         foreach ([
-            'strtoupper', 'strtolower',
-            'str_starts_with', 'str_ends_with', 'str_contains',
-            'substr', 'strlen',
-            'trim', 'ltrim', 'rtrim',
-            'abs', 'min', 'max', 'floor', 'ceil',
-        ] as $nativeFunction) {
+             'strtoupper', 'strtolower',
+             'str_starts_with', 'str_ends_with', 'str_contains',
+             'substr', 'strlen',
+             'trim', 'ltrim', 'rtrim',
+             'abs', 'min', 'max', 'floor', 'ceil',
+         ] as $nativeFunction) {
             $this->expressionLanguage->addFunction(ExpressionFunction::fromPhp($nativeFunction));
         }
     }
 
-    public function evaluate(string $expression, mixed $record): mixed
+    public function evaluate(string $expression, mixed $record, array $parameters = []): mixed
     {
-        return $this->expressionLanguage->evaluate($expression, ['record' => $record]);
+        return $this->expressionLanguage->evaluate($expression, [...$parameters, 'record' => $record]);
     }
 }

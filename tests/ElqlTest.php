@@ -131,4 +131,14 @@ class ElqlTest extends AbstractTestCase
 
         self::assertCount(1, $this->database->find(Baz::class, 'strtoupper(record.firstName) === "A"'));
     }
+
+    public function testItUseParametersInExpressionLanguage(): void
+    {
+        $this->database->add(
+            new Baz(1, 'a', 'a'),
+            new Baz(2, 'b', 'b'),
+        );
+
+        self::assertCount(1, $this->database->find(Baz::class, 'strtoupper(record.firstName) === value', ['value' => 'A']));
+    }
 }

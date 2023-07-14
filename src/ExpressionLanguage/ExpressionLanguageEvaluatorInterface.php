@@ -6,5 +6,5 @@ namespace Micoli\Elql\ExpressionLanguage;
 
 interface ExpressionLanguageEvaluatorInterface
 {
-    public function evaluate(string $expression, mixed $record): mixed;
+    public function evaluate(string $expression, mixed $record, array $parameters = []): mixed;
 }
