@@ -73,7 +73,7 @@ class ElqlTest extends AbstractTestCase
                         lastName: c
                     BAZ
             ),
-            trim(file_get_contents($this->databaseDir . '/Baz.yaml')),
+            trim(file_get_contents($this->databaseDir . '/b_a_z.yaml')),
         );
         self::assertcount(2, $this->database->persister->getDatabase());
     }
@@ -81,7 +81,7 @@ class ElqlTest extends AbstractTestCase
     public function testItShouldReadFromFiles(): void
     {
         file_put_contents(
-            $this->databaseDir . '/Baz.yaml',
+            $this->databaseDir . '/b_a_z.yaml',
             <<<BAZ
                 -
                     id: 2
