@@ -6,6 +6,8 @@ namespace Micoli\Elql\Persister;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Micoli\Elql\Encoder\YamlEncoder;
+use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluator;
+use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluatorInterface;
 use Micoli\Elql\Metadata\MetadataManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
@@ -29,6 +31,7 @@ class FilePersister implements PersisterInterface
         private readonly string $dir,
         private readonly MetadataManagerInterface $metadataManager,
         private readonly string $format = JsonEncoder::FORMAT,
+        private readonly IndexChecker $indexChecker = new IndexChecker(),
         private readonly Serializer $serializer = new Serializer([
             new ArrayDenormalizer(),
             new DateTimeNormalizer(),
@@ -46,6 +49,7 @@ class FilePersister implements PersisterInterface
             new JsonEncoder(),
             new YamlEncoder(),
         ]),
+        private readonly ExpressionLanguageEvaluatorInterface $expressionLanguageEvaluator = new ExpressionLanguageEvaluator(),
     ) {
         $this->filesystem = new Filesystem();
     }
@@ -89,7 +93,15 @@ class FilePersister implements PersisterInterface
 
     public function addRecord(object $record): void
     {
-        $this->getRecords($record::class)->data[] = $record;
+        $inMemoryTable = $this->getRecords($record::class);
+        $this->indexChecker->checkUniqueIndexes(
+            $this->metadataManager,
+            $this->expressionLanguageEvaluator,
+            $record,
+            $inMemoryTable,
+        );
+
+        $inMemoryTable->data[] = $record;
     }
 
     /**

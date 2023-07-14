@@ -7,6 +7,7 @@ namespace Micoli\Elql\Tests;
 use DateTimeImmutable;
 use Micoli\Elql\Elql;
 use Micoli\Elql\Encoder\YamlEncoder;
+use Micoli\Elql\Exception\NonUniqueException;
 use Micoli\Elql\Metadata\MetadataManager;
 use Micoli\Elql\Persister\FilePersister;
 use Micoli\Elql\Tests\Fixtures\Baz;
@@ -98,5 +99,36 @@ class ElqlTest extends AbstractTestCase
         self::assertSame(3, $record->id);
         self::assertSame('c', $record->firstName);
         self::assertSame('c', $record->lastName);
+    }
+
+    public function testItShouldNotAddIfUniqueIndexIsDuplicated(): void
+    {
+        $this->database->add(new Baz(1, 'a', 'a'));
+
+        self::expectException(NonUniqueException::class);
+        self::expectExceptionMessage('Duplicate on [record.id:1]');
+        $this->database->add(new Baz(1, 'b', 'b'));
+    }
+
+    public function testItShouldNotAddIfMultipleUniqueIndexIsDuplicated(): void
+    {
+        $this->database->add(
+            new Baz(1, 'a', 'a'),
+            new Baz(2, 'b', 'b'),
+        );
+
+        self::expectException(NonUniqueException::class);
+        self::expectExceptionMessage('Duplicate on [record.id:2], [fullname:["a","a"]]');
+        $this->database->add(new Baz(2, 'a', 'a'));
+    }
+
+    public function testItUseExtendedExpressionLanguage(): void
+    {
+        $this->database->add(
+            new Baz(1, 'a', 'a'),
+            new Baz(2, 'b', 'b'),
+        );
+
+        self::assertCount(1, $this->database->find(Baz::class, 'strtoupper(record.firstName) === "A"'));
     }
 }

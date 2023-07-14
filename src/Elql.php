@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace Micoli\Elql;
 
+use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluator;
+use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluatorInterface;
 use Micoli\Elql\Persister\PersisterInterface;
-use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
 
 class Elql
 {
     public function __construct(
         public readonly PersisterInterface $persister,
-        private readonly ExpressionLanguage $expressionLanguage = new ExpressionLanguage(),
+        private readonly ExpressionLanguageEvaluatorInterface $expressionLanguageEvaluator = new ExpressionLanguageEvaluator(),
     ) {
     }
 
@@ -87,6 +88,6 @@ class Elql
             return true;
         }
 
-        return (bool) $this->expressionLanguage->evaluate($where, ['record' => $record]);
+        return (bool) $this->expressionLanguageEvaluator->evaluate($where, $record);
     }
 }
