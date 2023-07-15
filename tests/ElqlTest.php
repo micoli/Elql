@@ -56,7 +56,7 @@ class ElqlTest extends AbstractTestCase
         $records = $this->database->find(Baz::class, 'record.id==3');
         self::assertSame('c-updated', $records[0]->firstName);
 
-        $this->database->delete(Baz::class, 'record.id in [1,4]');
+        $this->database->delete(Baz::class, 'record.id in ids', ['ids' => [1, 4]]);
         $this->database->add(new Foo(2, 'bb', new DateTimeImmutable()));
         self::assertSame(2, $this->database->count(Baz::class));
         self::assertSame(2, $this->database->count(Foo::class));

@@ -48,7 +48,7 @@ class Elql
     {
         $this->persister->updateRecords($model, array_values(array_filter(
             $this->persister->getRecords($model)->data,
-            fn (mixed $record) => !$this->match($record, $where),
+            fn (mixed $record) => !$this->match($record, $where, $parameters),
         )));
     }
 
