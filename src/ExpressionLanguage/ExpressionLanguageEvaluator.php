@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Micoli\Elql\ExpressionLanguage;
 
+use Micoli\Elql\Exception\ExpressionLanguageException;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 use Symfony\Component\ExpressionLanguage\ExpressionLanguage;
+use Symfony\Component\ExpressionLanguage\SyntaxError;
 
 class ExpressionLanguageEvaluator implements ExpressionLanguageEvaluatorInterface
 {
@@ -26,6 +28,10 @@ class ExpressionLanguageEvaluator implements ExpressionLanguageEvaluatorInterfac
 
     public function evaluate(string $expression, mixed $record, array $parameters = []): mixed
     {
-        return $this->expressionLanguage->evaluate($expression, [...$parameters, 'record' => $record]);
+        try {
+            return $this->expressionLanguage->evaluate($expression, [...$parameters, 'record' => $record]);
+        } catch (SyntaxError $exception) {
+            throw new ExpressionLanguageException($exception->getMessage(), previous: $exception);
+        }
     }
 }

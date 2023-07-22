@@ -6,12 +6,14 @@ namespace Micoli\Elql\Persister;
 
 use Doctrine\Common\Annotations\AnnotationReader;
 use Micoli\Elql\Encoder\YamlEncoder;
+use Micoli\Elql\Exception\SerializerException;
 use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluator;
 use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluatorInterface;
 use Micoli\Elql\Metadata\MetadataManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
 use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
@@ -74,13 +76,16 @@ class FilePersister implements PersisterInterface
 
             return $this->records[$model];
         }
-
-        /** @var array $values */
-        $values = $this->serializer->deserialize(
-            file_get_contents($filename),
-            $model . '[]',
-            $this->format,
-        );
+        try {
+            /** @var array $values */
+            $values = $this->serializer->deserialize(
+                file_get_contents($filename),
+                $model . '[]',
+                $this->format,
+            );
+        } catch (ExceptionInterface $exception) {
+            throw new SerializerException($exception->getMessage(), previous: $exception);
+        }
         $this->records[$model] = new InMemoryTable($model, $values);
 
         return $this->records[$model];

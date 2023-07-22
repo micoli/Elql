@@ -6,6 +6,6 @@ namespace Micoli\Elql\Exception;
 
 use LogicException;
 
-class ElqlException extends LogicException
+abstract class ElqlException extends LogicException
 {
 }

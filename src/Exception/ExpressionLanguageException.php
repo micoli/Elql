@@ -4,6 +4,6 @@ declare(strict_types=1);
 
 namespace Micoli\Elql\Exception;
 
-final class NonUniqueException extends ElqlException
+final class ExpressionLanguageException extends ElqlException
 {
 }
