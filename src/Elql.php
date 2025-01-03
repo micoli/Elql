@@ -33,7 +33,7 @@ class Elql
      *
      * @return T[]
      */
-    public function find(string $model, string $where = null, array $parameters = []): array
+    public function find(string $model, ?string $where = null, array $parameters = []): array
     {
         return array_values(array_filter(
             $this->persister->getRecords($model)->data,
@@ -44,7 +44,7 @@ class Elql
     /**
      * @param class-string $model
      */
-    public function delete(string $model, string $where = null, array $parameters = []): void
+    public function delete(string $model, ?string $where = null, array $parameters = []): void
     {
         $this->persister->updateRecords($model, array_values(array_filter(
             $this->persister->getRecords($model)->data,
@@ -55,7 +55,7 @@ class Elql
     /**
      * @param class-string $model
      */
-    public function count(string $model, string $where = null, array $parameters = []): int
+    public function count(string $model, ?string $where = null, array $parameters = []): int
     {
         return count($this->find($model, $where, $parameters));
     }
@@ -66,7 +66,7 @@ class Elql
      * @param class-string<T> $model
      * @param callable(T):T $updater
      */
-    public function update(string $model, callable $updater, string $where = null, array $parameters = []): void
+    public function update(string $model, callable $updater, ?string $where = null, array $parameters = []): void
     {
         $this->persister->updateRecords($model, array_map(
             /** @param T $record */

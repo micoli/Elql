@@ -16,12 +16,12 @@ class ExpressionLanguageEvaluator implements ExpressionLanguageEvaluatorInterfac
         private readonly ExpressionLanguage $expressionLanguage = new ExpressionLanguage(new ArrayAdapter()),
     ) {
         foreach ([
-             'strtoupper', 'strtolower',
-             'str_starts_with', 'str_ends_with', 'str_contains',
-             'substr', 'strlen',
-             'trim', 'ltrim', 'rtrim',
-             'abs', 'min', 'max', 'floor', 'ceil',
-         ] as $nativeFunction) {
+            'strtoupper', 'strtolower',
+            'str_starts_with', 'str_ends_with', 'str_contains',
+            'substr', 'strlen',
+            'trim', 'ltrim', 'rtrim',
+            'abs', 'min', 'max', 'floor', 'ceil',
+        ] as $nativeFunction) {
             $this->expressionLanguage->addFunction(ExpressionFunction::fromPhp($nativeFunction));
         }
     }

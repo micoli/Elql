@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Micoli\Elql\Persister;
 
-use Doctrine\Common\Annotations\AnnotationReader;
 use Micoli\Elql\Encoder\YamlEncoder;
 use Micoli\Elql\Exception\SerializerException;
 use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluator;
 use Micoli\Elql\ExpressionLanguage\ExpressionLanguageEvaluatorInterface;
 use Micoli\Elql\Metadata\MetadataManagerInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Lock\LockInterface;
+use Symfony\Component\Lock\Store\FlockStore;
 use Symfony\Component\PropertyInfo\Extractor\PhpDocExtractor;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Exception\ExceptionInterface;
 use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
+use Symfony\Component\Serializer\Mapping\Loader\AttributeLoader;
 use Symfony\Component\Serializer\Normalizer\ArrayDenormalizer;
 use Symfony\Component\Serializer\Normalizer\DateTimeNormalizer;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
@@ -39,9 +41,7 @@ class FilePersister implements PersisterInterface
             new DateTimeNormalizer(),
             new ObjectNormalizer(
                 new ClassMetadataFactory(
-                    new AnnotationLoader(
-                        new AnnotationReader(),
-                    ),
+                    new AttributeLoader(),
                 ),
                 null,
                 null,
